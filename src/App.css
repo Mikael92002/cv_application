@@ -1,0 +1,16 @@
+h1{
+  text-align: center;
+  border: 1px solid black;
+}
+
+#all-sections{
+width:min-content;
+}
+
+label{
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
