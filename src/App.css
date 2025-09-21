@@ -1,16 +1,48 @@
-h1{
+h1 {
   text-align: center;
   border: 1px solid black;
+  margin: 0;
+}
+h3{
+  margin: 0;
+}
+#container-1 {
+  width: min-content;
 }
 
-#all-sections{
-width:min-content;
-}
-
-label{
+label {
   display: flex;
   justify-content: flex-end;
   gap: 30px;
   margin-bottom: 8px;
   white-space: nowrap;
+}
+
+#flex-container {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+#container-2 {
+  justify-content: center;
+  align-items: center;
+  border:1px solid black;
+  flex-direction: column;
+  margin: 2px;
+  width: 100%;
+}
+
+#container-2 h1 {
+  border: none;
+  text-align: center;
+  margin-top: 0;
+}
+
+.invisible{
+  padding: 0;
+  border: 0;
+  opacity: 0%;
+  width: 0%;
 }
