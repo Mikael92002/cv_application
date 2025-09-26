@@ -55,7 +55,11 @@ function ContactInfo({ handleFunction, disabled, resumeComponents }) {
 }
 
 function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
-  function allChanges(name, major, studyDate) {}
+  const schoolObject = [schoolObject, setSchoolObject] = useState({});
+  
+  function allChanges(name, major, studyDate) {
+
+  }
   return (
     <>
       <label htmlFor="school">
