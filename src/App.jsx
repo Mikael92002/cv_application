@@ -54,12 +54,16 @@ function ContactInfo({ handleFunction, disabled, resumeComponents }) {
   );
 }
 
-function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
-  const schoolObject = [schoolObject, setSchoolObject] = useState({});
-  
-  function allChanges(name, major, studyDate) {
-
+function SchoolSection({ disabled, onChange, storedValue, id }) {
+  function allChanges(field, value) {
+    const updatedSchool = {
+      ...storedValue,
+      [field]: value,
+      id,
+    };
+    onChange(id, updatedSchool);
   }
+
   return (
     <>
       <label htmlFor="school">
@@ -69,8 +73,8 @@ function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
           type="text"
           name="school"
           id="school"
-          value={storedValue.name}
-          onChange={(event) => handleFunction(event, "schoolName")}
+          value={storedValue.schoolName}
+          onChange={(event) => allChanges("schoolName", event.target.value)}
         />
       </label>
       <label htmlFor="major">
@@ -80,7 +84,7 @@ function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
           type="text"
           name="major"
           id="major"
-          onChange={(event) => handleFunction(event, "major")}
+          onChange={(event) => allChanges("major", event.target.value)}
         />
       </label>
       <label htmlFor="study-date">
@@ -90,7 +94,7 @@ function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
           type="date"
           name="study-date"
           id="study-date"
-          onChange={(event) => handleFunction(event, "studyDate")}
+          onChange={(event) => allChanges("studyDate", event.target.value)}
         />
       </label>
     </>
@@ -189,7 +193,7 @@ function App() {
   const [submitButton, setSubmitButton] = useState(true);
 
   const [schoolArray, setSchoolArray] = useState([
-    { id: 1, schoolName: "", major: "", studyDate: "" },
+    { id: crypto.randomUUID(), schoolName: "", major: "", studyDate: "" },
   ]);
 
   function handleTyping(event, inputType) {
@@ -218,14 +222,7 @@ function App() {
   function handleSchoolArray(newSchoolObject) {
     setSchoolArray((prevSchools) => {
       prevSchools.map((school) => {
-        school.id === newSchoolObject.id
-          ? {
-              id: school.id,
-              schoolName: newSchoolObject.schoolName,
-              major: newSchoolObject.major,
-              studyDate: newSchoolObject.studyDate,
-            }
-          : newSchoolObject;
+        school.id === newSchoolObject.id ? newSchoolObject : school;
       });
     });
   }
@@ -243,11 +240,16 @@ function App() {
             ></ContactInfo>
             {/* Static info above */}
 
-            <SchoolSection
-              handleFunction={handleTyping}
-              disabled={editButton}
-              onChange={handleSchoolArray}
-            />
+            {schoolArray.map((school) => {
+              return (
+                <SchoolSection
+                  disabled={editButton}
+                  storedValue={school}
+                  onChange={handleSchoolArray}
+                  key={school.id}
+                ></SchoolSection>
+              );
+            })}
             <PracticalExperience
               handleFunction={handleTyping}
               disabled={editButton}
