@@ -239,7 +239,6 @@ function App() {
               resumeComponents={resumeComponents}
             ></ContactInfo>
             {/* Static info above */}
-
             {schoolArray.map((school) => {
               return (
                 <SchoolSection
@@ -250,6 +249,25 @@ function App() {
                 ></SchoolSection>
               );
             })}
+            <button
+              onClick={() => {
+                setSchoolArray((prevSchools) => {
+                  const newSchoolArr = [
+                    ...prevSchools,
+                    {
+                      id: crypto.randomUUID(),
+                      schoolName: "",
+                      major: "",
+                      studyDate: "",
+                    },
+                  ];
+
+                  return newSchoolArr;
+                });
+              }}
+            >
+              Add School Experience
+            </button>
             <PracticalExperience
               handleFunction={handleTyping}
               disabled={editButton}
@@ -257,13 +275,11 @@ function App() {
             {editButton && (
               <button onClick={(event) => handleEdit(event)}>Edit</button>
             )}
-
             {submitButton && (
               <button onClick={(event) => handleLiveResume(event)}>
                 Submit
               </button>
             )}
-
             {/* Variable info above */}
           </form>
         </div>
