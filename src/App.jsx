@@ -1,7 +1,61 @@
 import { useState } from "react";
 import "./App.css";
 
-function AddSchoolButton({ handleFunction, disabled }) {
+function ContactInfo({ handleFunction, disabled, resumeComponents }) {
+  return (
+    <>
+      <label htmlFor="name">
+        Name:
+        <input
+          disabled={disabled}
+          type="text"
+          value={decideValue({
+            resumeComponents: resumeComponents,
+            componentName: "name",
+          })}
+          name="name"
+          id="name"
+          maxLength="40"
+          onChange={(event) => handleFunction(event, "name")}
+        />
+      </label>
+      <label htmlFor="email">
+        Email:
+        <input
+          disabled={disabled}
+          type="email"
+          name="email"
+          id="email"
+          maxLength="256"
+          value={decideValue({
+            resumeComponents: resumeComponents,
+            componentName: "email",
+          })}
+          onChange={(event) => handleFunction(event, "email")}
+        />
+      </label>
+      <label htmlFor="number">
+        Phone Number:
+        <input
+          disabled={disabled}
+          type="tel"
+          name="number"
+          id="number"
+          maxLength="10"
+          pattern="[0-9]{10}"
+          value={decideValue({
+            resumeComponents: resumeComponents,
+            componentName: "number",
+          })}
+          onChange={(event) => handleFunction(event, "number")}
+        />
+      </label>
+    </>
+  );
+}
+
+function SchoolSection({ handleFunction, disabled, onChange, storedValue }) {
+  function allChanges(name, major, studyDate) {}
   return (
     <>
       <label htmlFor="school">
@@ -11,6 +65,7 @@ function AddSchoolButton({ handleFunction, disabled }) {
           type="text"
           name="school"
           id="school"
+          value={storedValue.name}
           onChange={(event) => handleFunction(event, "schoolName")}
         />
       </label>
@@ -126,9 +181,12 @@ function App() {
   const [resumeComponents, setResumeComponents] = useState({});
   const [liveResume, setLiveResume] = useState({});
 
-  // edit button show state is true
   const [editButton, setEditButton] = useState(false);
   const [submitButton, setSubmitButton] = useState(true);
+
+  const [schoolArray, setSchoolArray] = useState([
+    { id: 1, schoolName: "", major: "", studyDate: "" },
+  ]);
 
   function handleTyping(event, inputType) {
     const newObject = { ...resumeComponents, [inputType]: event.target.value };
@@ -153,63 +211,38 @@ function App() {
     setSubmitButton(true);
   }
 
+  function handleSchoolArray(newSchoolObject) {
+    setSchoolArray((prevSchools) => {
+      prevSchools.map((school) => {
+        school.id === newSchoolObject.id
+          ? {
+              id: school.id,
+              schoolName: newSchoolObject.schoolName,
+              major: newSchoolObject.major,
+              studyDate: newSchoolObject.studyDate,
+            }
+          : newSchoolObject;
+      });
+    });
+  }
+
   return (
     <>
       <h1>Resume Generator</h1>
       <div id="flex-container">
         <div id="container-1">
           <form action="" method="post" onSubmit={handleSubmit}>
-            <label htmlFor="name">
-              Name:
-              <input
-                disabled={editButton}
-                type="text"
-                value={decideValue({
-                  resumeComponents: resumeComponents,
-                  componentName: "name",
-                })}
-                name="name"
-                id="name"
-                maxLength="40"
-                onChange={(event) => handleTyping(event, "name")}
-              />
-            </label>
-            <label htmlFor="email">
-              Email:
-              <input
-                disabled={editButton}
-                type="email"
-                name="email"
-                id="email"
-                maxLength="256"
-                value={decideValue({
-                  resumeComponents: resumeComponents,
-                  componentName: "email",
-                })}
-                onChange={(event) => handleTyping(event, "email")}
-              />
-            </label>
-            <label htmlFor="number">
-              Phone Number:
-              <input
-                disabled={editButton}
-                type="tel"
-                name="number"
-                id="number"
-                maxLength="10"
-                pattern="[0-9]{10}"
-                value={decideValue({
-                  resumeComponents: resumeComponents,
-                  componentName: "number",
-                })}
-                onChange={(event) => handleTyping(event, "number")}
-              />
-            </label>
-            {/* Static info above */}
-
-            <AddSchoolButton
+            <ContactInfo
               handleFunction={handleTyping}
               disabled={editButton}
+              resumeComponents={resumeComponents}
+            ></ContactInfo>
+            {/* Static info above */}
+
+            <SchoolSection
+              handleFunction={handleTyping}
+              disabled={editButton}
+              onChange={handleSchoolArray}
             />
             <PracticalExperience
               handleFunction={handleTyping}
