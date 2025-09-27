@@ -54,7 +54,13 @@ function ContactInfo({ handleFunction, disabled, resumeComponents }) {
   );
 }
 
-function SchoolSection({ disabled, handleSchoolArray, currSchool }) {
+function SchoolSection({
+  disabled,
+  handleSchoolArray,
+  currSchool,
+  removeButton,
+  removeFunction
+}) {
   function allChanges(field, value) {
     const updatedSchool = {
       ...currSchool,
@@ -97,11 +103,18 @@ function SchoolSection({ disabled, handleSchoolArray, currSchool }) {
           onChange={(event) => allChanges("studyDate", event.target.value)}
         />
       </label>
+      {removeButton && <button onClick = {()=>{removeFunction(currSchool.id)}}>Remove School Experience</button>}
     </>
   );
 }
 
-function PracticalExperience({ handleCompanyArray, disabled, currCompany }) {
+function PracticalExperience({
+  handleCompanyArray,
+  disabled,
+  currCompany,
+  removeButton,
+  removeFunction,
+}) {
   function allChanges(field, value) {
     const updatedObject = {
       ...currCompany,
@@ -168,6 +181,15 @@ function PracticalExperience({ handleCompanyArray, disabled, currCompany }) {
           onChange={(event) => allChanges("to", event.target.value)}
         />
       </label>
+      {removeButton && (
+        <button
+          onClick={() => {
+            removeFunction(currCompany.id);
+          }}
+        >
+          Remove Work Experience
+        </button>
+      )}
     </>
   );
 }
@@ -203,6 +225,40 @@ function LiveResume({ components }) {
       })}
     </>
   );
+}
+
+function addButton(objectType, setFunction) {
+  if (objectType === "company") {
+    setFunction((prevCompanies) => {
+      const newArr = [
+        ...prevCompanies,
+        {
+          id: crypto.randomUUID(),
+          companyName: "",
+          position: "",
+          responsibilities: "",
+          from: "",
+          to: "",
+        },
+      ];
+
+      return newArr;
+    });
+  } else if (objectType === "school") {
+    setFunction((prevSchools) => {
+      const newSchoolArr = [
+        ...prevSchools,
+        {
+          id: crypto.randomUUID(),
+          schoolName: "",
+          major: "",
+          studyDate: "",
+        },
+      ];
+
+      return newSchoolArr;
+    });
+  }
 }
 
 function handleSubmit(event) {
@@ -274,10 +330,26 @@ function App() {
     });
   }
 
+  function removeFromSchoolArray(id) {
+    setSchoolArray((prevSchools) => {
+      return prevSchools.filter((school) => {
+        return school.id !== id;
+      });
+    });
+  }
+
   function handleCompanyArray(newCompanyObject) {
     setCompanyArray((prevCompanies) => {
       return prevCompanies.map((company) => {
         return company.id === newCompanyObject.id ? newCompanyObject : company;
+      });
+    });
+  }
+
+  function removeFromCompanyArray(id) {
+    setCompanyArray((prevCompanies) => {
+      return prevCompanies.filter((company) => {
+        return company.id !== id;
       });
     });
   }
@@ -301,29 +373,13 @@ function App() {
                   currSchool={school}
                   handleSchoolArray={handleSchoolArray}
                   key={school.id}
+                  removeButton={schoolArray.length >= 2}
+                  removeFunction={removeFromSchoolArray}
                 ></SchoolSection>
               );
             })}
             {schoolArray.length < 2 && (
-              <button
-                onClick={() => {
-                  if (schoolArray.length < 2) {
-                    setSchoolArray((prevSchools) => {
-                      const newSchoolArr = [
-                        ...prevSchools,
-                        {
-                          id: crypto.randomUUID(),
-                          schoolName: "",
-                          major: "",
-                          studyDate: "",
-                        },
-                      ];
-
-                      return newSchoolArr;
-                    });
-                  }
-                }}
-              >
+              <button onClick={() => addButton("school", setSchoolArray)}>
                 Add School Experience
               </button>
             )}
@@ -334,30 +390,16 @@ function App() {
                   handleCompanyArray={handleCompanyArray}
                   currCompany={company}
                   key={company.id}
+                  removeButton={companyArray.length >= 2}
+                  removeFunction={removeFromCompanyArray}
                 ></PracticalExperience>
               );
             })}
-            <button
-              onClick={() =>
-                setCompanyArray((prevCompanies) => {
-                  const newCompanyArr = [
-                    ...prevCompanies,
-                    {
-                      id: crypto.randomUUID(),
-                      companyName: "",
-                      position: "",
-                      responsibilities: "",
-                      from: "",
-                      to: "",
-                    },
-                  ];
-
-                  return newCompanyArr;
-                })
-              }
-            >
-              Add work experience
-            </button>
+            {companyArray.length < 2 && (
+              <button onClick={() => addButton("company", setCompanyArray)}>
+                Add work experience
+              </button>
+            )}
             {editButton && (
               <button
                 style={{ display: "block" }}
