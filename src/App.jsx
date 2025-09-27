@@ -157,15 +157,23 @@ function PracticalExperience({ handleFunction, disabled }) {
   );
 }
 
-function LiveResume({ resumeComponents }) {
+function LiveResume({ components }) {
+  const resumeComponents = components[0];
+  const schoolArray = components[1];
   return (
     <>
       <h1>{resumeComponents.name}</h1>
       <div>{resumeComponents.email}</div>
       <div>{resumeComponents.number}</div>
-      <div>{resumeComponents.schoolName}</div>
-      <div>{resumeComponents.major}</div>
-      <div>{resumeComponents.studyDate}</div>
+      {schoolArray.map((school) => {
+        return (
+          <>
+            <div key={school.id}>{school.schoolName}</div>
+            <div key={school.id}>{school.major}</div>
+            <div key={school.id}>{school.studyDate}</div>
+          </>
+        );
+      })}
       <h3>{resumeComponents.companyName}</h3>
       <div>{resumeComponents.position}</div>
       <div>{resumeComponents.responsibilities}</div>
@@ -187,7 +195,6 @@ function decideValue({ resumeComponents, componentName }) {
 
 function App() {
   const [resumeComponents, setResumeComponents] = useState({});
-  const [liveResume, setLiveResume] = useState({});
 
   const [editButton, setEditButton] = useState(false);
   const [submitButton, setSubmitButton] = useState(true);
@@ -195,6 +202,7 @@ function App() {
   const [schoolArray, setSchoolArray] = useState([
     { id: crypto.randomUUID(), schoolName: "", major: "", studyDate: "" },
   ]);
+  const [liveResume, setLiveResume] = useState([resumeComponents, schoolArray]);
 
   function handleTyping(event, inputType) {
     const newObject = { ...resumeComponents, [inputType]: event.target.value };
@@ -208,7 +216,7 @@ function App() {
     setEditButton(true);
     setSubmitButton(false);
 
-    setLiveResume(resumeComponents);
+    setLiveResume([resumeComponents, schoolArray]);
   }
 
   // only available when submit is false:
@@ -287,7 +295,7 @@ function App() {
           </form>
         </div>
         <div id="container-2">
-          <LiveResume resumeComponents={liveResume}></LiveResume>
+          <LiveResume components={liveResume}></LiveResume>
         </div>
       </div>
     </>
