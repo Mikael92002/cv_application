@@ -54,46 +54,46 @@ function ContactInfo({ handleFunction, disabled, resumeComponents }) {
   );
 }
 
-function SchoolSection({ disabled, onChange, storedValue, id }) {
+function SchoolSection({ disabled, handleSchoolArray, currSchool }) {
   function allChanges(field, value) {
     const updatedSchool = {
-      ...storedValue,
+      ...currSchool,
       [field]: value,
-      id,
     };
-    onChange(id, updatedSchool);
+    handleSchoolArray(updatedSchool);
   }
 
   return (
     <>
-      <label htmlFor="school">
+      <label>
         School Name:
         <input
           disabled={disabled}
           type="text"
           name="school"
-          id="school"
-          value={storedValue.schoolName}
+          className="school"
+          value={currSchool.schoolName}
           onChange={(event) => allChanges("schoolName", event.target.value)}
         />
       </label>
-      <label htmlFor="major">
+      <label>
         Major:
         <input
           disabled={disabled}
           type="text"
           name="major"
-          id="major"
+          className="major"
+          value={currSchool.major}
           onChange={(event) => allChanges("major", event.target.value)}
         />
       </label>
-      <label htmlFor="study-date">
+      <label>
         Study date:
         <input
           disabled={disabled}
           type="date"
           name="study-date"
-          id="study-date"
+          className="study-date"
           onChange={(event) => allChanges("studyDate", event.target.value)}
         />
       </label>
@@ -221,8 +221,11 @@ function App() {
 
   function handleSchoolArray(newSchoolObject) {
     setSchoolArray((prevSchools) => {
-      prevSchools.map((school) => {
-        school.id === newSchoolObject.id ? newSchoolObject : school;
+      return prevSchools.map((school) => {
+        if (school.id === newSchoolObject.id) {
+          return newSchoolObject;
+        }
+        return school;
       });
     });
   }
@@ -243,8 +246,8 @@ function App() {
               return (
                 <SchoolSection
                   disabled={editButton}
-                  storedValue={school}
-                  onChange={handleSchoolArray}
+                  currSchool={school}
+                  handleSchoolArray={handleSchoolArray}
                   key={school.id}
                 ></SchoolSection>
               );
