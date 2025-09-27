@@ -101,7 +101,15 @@ function SchoolSection({ disabled, handleSchoolArray, currSchool }) {
   );
 }
 
-function PracticalExperience({ handleFunction, disabled }) {
+function PracticalExperience({ handleCompanyArray, disabled, currCompany }) {
+  function allChanges(field, value) {
+    const updatedObject = {
+      ...currCompany,
+      [field]: value,
+    };
+
+    handleCompanyArray(updatedObject);
+  }
   return (
     <>
       <label htmlFor="company-name">
@@ -111,7 +119,8 @@ function PracticalExperience({ handleFunction, disabled }) {
           type="text"
           name="company-name"
           id="company-name"
-          onChange={(event) => handleFunction(event, "companyName")}
+          value={currCompany.companyName}
+          onChange={(event) => allChanges("companyName", event.target.value)}
         />
       </label>
       <label htmlFor="position">
@@ -121,7 +130,8 @@ function PracticalExperience({ handleFunction, disabled }) {
           type="text"
           name="position"
           id="position"
-          onChange={(event) => handleFunction(event, "position")}
+          value={currCompany.position}
+          onChange={(event) => allChanges("position", event.target.value)}
         />
       </label>
       <label htmlFor="responsibilities">
@@ -130,7 +140,10 @@ function PracticalExperience({ handleFunction, disabled }) {
           disabled={disabled}
           name="responsibilities"
           id="responsibilities"
-          onChange={(event) => handleFunction(event, "responsibilities")}
+          value={currCompany.responsibilities}
+          onChange={(event) =>
+            allChanges("responsibilities", event.target.value)
+          }
         ></textarea>
       </label>
       <label htmlFor="date-from">
@@ -140,7 +153,8 @@ function PracticalExperience({ handleFunction, disabled }) {
           type="date"
           name="date-from"
           id="date-from"
-          onChange={(event) => handleFunction(event, "from")}
+          value={currCompany.from}
+          onChange={(event) => allChanges("from", event.target.value)}
         />
       </label>
       <label htmlFor="date-to">
@@ -150,7 +164,8 @@ function PracticalExperience({ handleFunction, disabled }) {
           type="date"
           name="date-to"
           id="date-to"
-          onChange={(event) => handleFunction(event, "to")}
+          value={currCompany.to}
+          onChange={(event) => allChanges("to", event.target.value)}
         />
       </label>
     </>
@@ -160,6 +175,7 @@ function PracticalExperience({ handleFunction, disabled }) {
 function LiveResume({ components }) {
   const resumeComponents = components[0];
   const schoolArray = components[1];
+  const companyArray = components[2];
   return (
     <>
       <h1>{resumeComponents.name}</h1>
@@ -174,11 +190,17 @@ function LiveResume({ components }) {
           </div>
         );
       })}
-      <h3>{resumeComponents.companyName}</h3>
-      <div>{resumeComponents.position}</div>
-      <div>{resumeComponents.responsibilities}</div>
-      <div>{resumeComponents.from}</div>
-      <div>{resumeComponents.to}</div>
+      {companyArray.map((company) => {
+        return (
+          <div key={company.id}>
+            <h3>{company.companyName}</h3>
+            <div>{company.position}</div>
+            <div>{company.responsibilities}</div>
+            <div>{company.from}</div>
+            <div>{company.to}</div>
+          </div>
+        );
+      })}
     </>
   );
 }
@@ -202,7 +224,21 @@ function App() {
   const [schoolArray, setSchoolArray] = useState([
     { id: crypto.randomUUID(), schoolName: "", major: "", studyDate: "" },
   ]);
-  const [liveResume, setLiveResume] = useState([resumeComponents, schoolArray]);
+  const [companyArray, setCompanyArray] = useState([
+    {
+      id: crypto.randomUUID(),
+      companyName: "",
+      position: "",
+      responsibilities: "",
+      from: "",
+      to: "",
+    },
+  ]);
+  const [liveResume, setLiveResume] = useState([
+    resumeComponents,
+    schoolArray,
+    companyArray,
+  ]);
 
   function handleTyping(event, inputType) {
     const newObject = { ...resumeComponents, [inputType]: event.target.value };
@@ -216,7 +252,7 @@ function App() {
     setEditButton(true);
     setSubmitButton(false);
 
-    setLiveResume([resumeComponents, schoolArray]);
+    setLiveResume([resumeComponents, schoolArray, companyArray]);
   }
 
   // only available when submit is false:
@@ -234,6 +270,14 @@ function App() {
           return newSchoolObject;
         }
         return school;
+      });
+    });
+  }
+
+  function handleCompanyArray(newCompanyObject) {
+    setCompanyArray((prevCompanies) => {
+      return prevCompanies.map((company) => {
+        return company.id === newCompanyObject.id ? newCompanyObject : company;
       });
     });
   }
@@ -260,36 +304,73 @@ function App() {
                 ></SchoolSection>
               );
             })}
-            <button
-              onClick={() => {
-                if (schoolArray.length < 2) {
-                  setSchoolArray((prevSchools) => {
-                    const newSchoolArr = [
-                      ...prevSchools,
-                      {
-                        id: crypto.randomUUID(),
-                        schoolName: "",
-                        major: "",
-                        studyDate: "",
-                      },
-                    ];
+            {schoolArray.length < 2 && (
+              <button
+                onClick={() => {
+                  if (schoolArray.length < 2) {
+                    setSchoolArray((prevSchools) => {
+                      const newSchoolArr = [
+                        ...prevSchools,
+                        {
+                          id: crypto.randomUUID(),
+                          schoolName: "",
+                          major: "",
+                          studyDate: "",
+                        },
+                      ];
 
-                    return newSchoolArr;
-                  });
-                }
-              }}
+                      return newSchoolArr;
+                    });
+                  }
+                }}
+              >
+                Add School Experience
+              </button>
+            )}
+            {companyArray.map((company) => {
+              return (
+                <PracticalExperience
+                  disabled={editButton}
+                  handleCompanyArray={handleCompanyArray}
+                  currCompany={company}
+                  key={company.id}
+                ></PracticalExperience>
+              );
+            })}
+            <button
+              onClick={() =>
+                setCompanyArray((prevCompanies) => {
+                  const newCompanyArr = [
+                    ...prevCompanies,
+                    {
+                      id: crypto.randomUUID(),
+                      companyName: "",
+                      position: "",
+                      responsibilities: "",
+                      from: "",
+                      to: "",
+                    },
+                  ];
+
+                  return newCompanyArr;
+                })
+              }
             >
-              Add School Experience
+              Add work experience
             </button>
-            <PracticalExperience
-              handleFunction={handleTyping}
-              disabled={editButton}
-            ></PracticalExperience>
             {editButton && (
-              <button onClick={(event) => handleEdit(event)}>Edit</button>
+              <button
+                style={{ display: "block" }}
+                onClick={(event) => handleEdit(event)}
+              >
+                Edit
+              </button>
             )}
             {submitButton && (
-              <button onClick={(event) => handleLiveResume(event)}>
+              <button
+                style={{ display: "block" }}
+                onClick={(event) => handleLiveResume(event)}
+              >
                 Submit
               </button>
             )}
