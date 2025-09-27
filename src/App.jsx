@@ -262,19 +262,21 @@ function App() {
             })}
             <button
               onClick={() => {
-                setSchoolArray((prevSchools) => {
-                  const newSchoolArr = [
-                    ...prevSchools,
-                    {
-                      id: crypto.randomUUID(),
-                      schoolName: "",
-                      major: "",
-                      studyDate: "",
-                    },
-                  ];
+                if (schoolArray.length < 2) {
+                  setSchoolArray((prevSchools) => {
+                    const newSchoolArr = [
+                      ...prevSchools,
+                      {
+                        id: crypto.randomUUID(),
+                        schoolName: "",
+                        major: "",
+                        studyDate: "",
+                      },
+                    ];
 
-                  return newSchoolArr;
-                });
+                    return newSchoolArr;
+                  });
+                }
               }}
             >
               Add School Experience
