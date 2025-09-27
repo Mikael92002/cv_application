@@ -167,11 +167,11 @@ function LiveResume({ components }) {
       <div>{resumeComponents.number}</div>
       {schoolArray.map((school) => {
         return (
-          <>
-            <div key={school.id}>{school.schoolName}</div>
-            <div key={school.id}>{school.major}</div>
-            <div key={school.id}>{school.studyDate}</div>
-          </>
+          <div key={school.id}>
+            <div>{school.schoolName}</div>
+            <div>{school.major}</div>
+            <div>{school.studyDate}</div>
+          </div>
         );
       })}
       <h3>{resumeComponents.companyName}</h3>
